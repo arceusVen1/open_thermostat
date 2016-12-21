@@ -1,6 +1,6 @@
 from fichier import PlugConfigFile
 
-SETTINGS = {"probe": "", "type": "", "number": 0, "state": "off"}
+SETTINGS = {"slug": "", "probe": "", "type": "", "number": 0, "state": "off"}
 
 
 def _is_int(self, number):
@@ -31,11 +31,47 @@ class Plug():
     """deals with the electric plug Energenie and relay
     """
 
-    def __init__(self, slug, settings=SETTINGS):
+    def __init__(self, idt, settings=SETTINGS):
         self.settings = settings
-        self.slug = slug
-        self.path = "/home/pi/ds18b20_conf/" + self.idt + ".json"
-        self.config = PlugConfigFile(self.path)
+        self.idt = idt
+        self.settings["slug"] = self.idt
+        path = "/home/pi/ds18b20_conf/" + self.idt + ".json"
+        self.config = PlugConfigFile(path)
+
+    def has_config(self):
+        """test if the config file exist and has been filled
+
+        Returns:
+            bool: true if the config exists, false otherwise
+        """
+        if not self.config.exists() or (hasattr(self.config, "nbline") and
+                                        self.config.nbline == 0):
+            return False
+        else:
+            self.allow_config()
+            return True
+
+    def allow_config(self):
+        self.config.create()
+        self.config.edit()
+
+    def get_data(self):
+        self.config.readData()
+        self.settings = self.config.data
+        return self.settings
+
+    def set_data(self):
+        self.config.settings = self.settings
+        self.config.register()
+
+    def get_slug(self):
+        return self.settings["slug"]
+
+    def set_slug(self, slug):
+        if not _is_string(slug):
+            raise TypeError("the pseudo of plug must be a string")
+        self.config.rename(slug + ".json")
+        self.settings["slug"] = slug
 
     def get_probe(self):
         """get the id of the probe used for comparing temps/hygro

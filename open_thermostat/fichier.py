@@ -1,4 +1,5 @@
 from open_ds18b20.fichier import ProbeConfigFile
+from os import rename, path
 
 
 class PlugConfigFile(ProbeConfigFile):
@@ -25,3 +26,10 @@ class PlugConfigFile(ProbeConfigFile):
 
     def readData(self):
         super(PlugConfigFile, self).readData()
+
+    def rename(self, name):
+        self.closefile()
+        parent_path = path.dirname(self.path)
+        rename(parent_path + name, self.path)
+        self.path = parent_path + name
+        self.file = open(self.path, 'r')
