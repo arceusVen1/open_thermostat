@@ -40,7 +40,7 @@ class Plug():
 
     def has_config(self):
         """test if the config file exist and has been filled
-
+        
         Returns:
             bool: true if the config exists, false otherwise
         """
@@ -52,16 +52,26 @@ class Plug():
             return True
 
     def allow_config(self):
+        """create the file if needed and open it
+        """
         self.config.create()
         self.config.edit()
 
     def get_data(self):
+        """load the data and change the settings to match the data
+        
+        Returns:
+            dict: the new settings
+        """
         self.config.readData()
-        self.settings = self.config.data
+        self.settings = self.config.settings
         return self.settings
 
     def set_data(self):
+        """registers the settings in the config and rename the file properly
+        """
         self.config.settings = self.settings
+        self.config.rename(self.settings["slug"] + ".json")
         self.config.register()
 
     def get_slug(self):
@@ -70,7 +80,6 @@ class Plug():
     def set_slug(self, slug):
         if not _is_string(slug):
             raise TypeError("the pseudo of plug must be a string")
-        self.config.rename(slug + ".json")
         self.settings["slug"] = slug
 
     def get_probe(self):
@@ -79,7 +88,7 @@ class Plug():
         Returns:
             String: the id of the probe
         """
-        pass
+        return self.settings["probe"]
 
     def set_probe(self):
         """give a new id for the probe used as the indicator
@@ -92,7 +101,7 @@ class Plug():
         Returns:
             String: the type of plug
         """
-        pass
+        return self.settings["type"]
 
     def set_type(self, type_):
         """set the type of the plug
@@ -101,6 +110,7 @@ class Plug():
             type_ (String): "energeniee or "relay"
 
         Raises:
+            TypeError: if the type is not a string
             ValueError: if the type differs from "energenie" or "relay"
         """
         if not _is_string(type_):
@@ -116,7 +126,7 @@ class Plug():
         Returns:
             Int: number of the pin or channel
         """
-        pass
+        return self.settings["number"]
 
     def set_number(self, number):
         """set the number of the pin or channel of the plug
@@ -142,7 +152,7 @@ class Plug():
         Returns:
             String: "on" if porwered or "off" if not
         """
-        pass
+        return self.settings["state"]
 
     def set_state(self, state):
         """change the value of the state of the plug
