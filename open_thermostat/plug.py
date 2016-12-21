@@ -1,13 +1,15 @@
 from fichier import PlugConfigFile
+from os import listdir
 
 SETTINGS = {"slug": "", "probe": "", "type": "", "number": 0, "state": "off"}
+PATH = "/home/pi/ds18b20_conf/plugs/"
 
 
 def _is_int(self, number):
     """check if the type is a int or not
 
     Args:
-        number (any): the number you want to test
+        number (obj): the number you want to test
 
     Returns:
         bool: True if number is a int
@@ -19,12 +21,24 @@ def _is_string(self, string):
     """check if the type is a string or not
 
     Args:
-        string (any): the string you want to check
+        string (obj): the string you want to check
 
     Returns:
         bool: True if string is really a string
     """
     return isinstance(string, str)
+
+
+class Materials():
+    """represents the plugs or relay board
+    """
+
+    def __init__(self):
+        self.files = []
+
+    def detect_plugs(self):
+        for file in listdir(PATH):
+            self.files.append(file)
 
 
 class Plug():
@@ -35,12 +49,12 @@ class Plug():
         self.settings = settings
         self.idt = idt
         self.settings["slug"] = self.idt
-        path = "/home/pi/ds18b20_conf/" + self.idt + ".json"
+        path = PATH + self.idt + ".json"
         self.config = PlugConfigFile(path)
 
     def has_config(self):
         """test if the config file exist and has been filled
-        
+
         Returns:
             bool: true if the config exists, false otherwise
         """
@@ -59,7 +73,7 @@ class Plug():
 
     def get_data(self):
         """load the data and change the settings to match the data
-        
+
         Returns:
             dict: the new settings
         """
@@ -86,7 +100,7 @@ class Plug():
         """get the id of the probe used for comparing temps/hygro
 
         Returns:
-            String: the id of the probe
+            string: the id of the probe
         """
         return self.settings["probe"]
 
@@ -99,7 +113,7 @@ class Plug():
         """get the type of the plug (relay or Energenie)
 
         Returns:
-            String: the type of plug
+            string: the type of plug
         """
         return self.settings["type"]
 
@@ -107,7 +121,7 @@ class Plug():
         """set the type of the plug
 
         Args:
-            type_ (String): "energeniee or "relay"
+            type_ (string): "energeniee or "relay"
 
         Raises:
             TypeError: if the type is not a string
@@ -124,7 +138,7 @@ class Plug():
         """get the number of the pin for the relay or the channel for the Energenie
 
         Returns:
-            Int: number of the pin or channel
+            int: number of the pin or channel
         """
         return self.settings["number"]
 
@@ -132,7 +146,7 @@ class Plug():
         """set the number of the pin or channel of the plug
 
         Args:
-            number (Int): the pin or channel number
+            number (int): the pin or channel number
 
         Raises:
             TypeError: the number must be an integer
@@ -150,15 +164,16 @@ class Plug():
         """get the state of the Plug
 
         Returns:
-            String: "on" if porwered or "off" if not
+            itring: "on" if porwered or "off" if not
         """
+        self.set_state
         return self.settings["state"]
 
     def set_state(self, state):
         """change the value of the state of the plug
 
         Args:
-            state (String): "on" or "off"
+            state (string): "on" or "off"
 
         Raises:
             TypeError: the state is a string
