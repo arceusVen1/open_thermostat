@@ -1,3 +1,4 @@
+from fichier import PlugConfigFile
 
 SETTINGS = {"probe": "", "type": "", "number": 0, "state": "off"}
 
@@ -30,8 +31,11 @@ class Plug():
     """deals with the electric plug Energenie and relay
     """
 
-    def __init__(self, settings=SETTINGS):
+    def __init__(self, slug, settings=SETTINGS):
         self.settings = settings
+        self.slug = slug
+        self.path = "/home/pi/ds18b20_conf/" + self.idt + ".json"
+        self.config = PlugConfigFile(self.path)
 
     def get_probe(self):
         """get the id of the probe used for comparing temps/hygro
