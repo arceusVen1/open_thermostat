@@ -104,7 +104,7 @@ class Plug():
         """
         return self.settings["probe"]
 
-    def set_probe(self):
+    def set_probe(self, id):
         """give a new id for the probe used as the indicator
         """
         pass
