@@ -21,8 +21,8 @@ class PlugConfigFile(ProbeConfigFile):
     def register(self):
         super(PlugConfigFile, self).register()
 
-    def __save(self):
-        super(PlugConfigFile, self).__save()
+    def _save(self):
+        super(PlugConfigFile, self)._save()
 
     def readData(self):
         super(PlugConfigFile, self).readData()
