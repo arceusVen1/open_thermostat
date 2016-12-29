@@ -47,6 +47,10 @@ class Thermostat():
             if moment.hour <= time.hour and moment.minute <= time.minute:
                 return moment
 
+    def link_probe_slug(self, probes):
+    	pass
+
+
     def power_on(self, plug):
         electric = Energenie(plug.get_channel())
         electric.on()
