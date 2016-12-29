@@ -184,3 +184,9 @@ class Plug():
         if state != "on" or state != "off":
             raise ValueError("the state should only be \"on\" or \"off\"")
         self.settings["state"] = state
+
+    def set_on(self):
+        self.settings["state"] = "on"
+
+    def set_off(self):
+        self.settings["state"] = "off"

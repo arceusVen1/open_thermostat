@@ -1,4 +1,6 @@
 from open_ds18b20.probe import Probe
+from open_thermostat.plug import Plug
+from gpiozero import Energenie
 from datetime import datetime
 
 
@@ -16,6 +18,11 @@ class Thermostat():
         self.step = step
 
     def need_action(self):
+        """Take a look at the configuration of the plugs and compares with the temps to decide if an action is needed (on/off)
+
+        Returns:
+            dict: {id_of_the_probe : action}
+        """
         actions = {}
         for i in range(len(self.ids)):
             probe = Probe(self.ids[i])
@@ -39,3 +46,13 @@ class Thermostat():
             moment = datetime.strptime(moment, "%H:%M")
             if moment.hour <= time.hour and moment.minute <= time.minute:
                 return moment
+
+    def power_on(self, plug):
+        electric = Energenie(plug.get_channel())
+        electric.on()
+        plug.set_on()
+
+    def power_off(self, plug):
+        electric = Energenie(plug.get_channel())
+        electric.off()
+        plug.set_off()
