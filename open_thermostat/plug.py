@@ -45,11 +45,11 @@ class Plug():
     """deals with the electric plug Energenie and relay
     """
 
-    def __init__(self, idt, settings=SETTINGS):
+    def __init__(self, file_name, settings=SETTINGS):
         self.settings = settings
-        self.idt = idt
+        self.idt = file_name[:-5]
         self.settings["slug"] = self.idt
-        path = PATH + self.idt + ".json"
+        path = PATH + file_name
         self.config = PlugConfigFile(path)
 
     def has_config(self):
