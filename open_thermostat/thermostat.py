@@ -7,7 +7,7 @@ from datetime import datetime
 class Thermostat():
 
     def __init__(self, temperatures, step=1):
-        """get the probe ids and thier temps in 2 different lists
+        """get the probe ids and their temps in 2 different lists
 
         Args:
             temperatures (dict): {id_of_the_probe: temp}
