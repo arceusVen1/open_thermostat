@@ -32,7 +32,7 @@ class Thermostat():
                     thermorange = probe.link_moment_temp()
                     # do somethig to get time and temp
                     moment = self._compare_time(thermorange)
-                    ref = thermorange[moment]
+                    ref = thermorange[datetime.strftime(moment, "%H:%M")]
                     temp = float(self.temperatures[i])
                     if temp > (ref + self.step):
                         actions[self.ids[i]] = "off"
