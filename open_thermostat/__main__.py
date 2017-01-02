@@ -7,11 +7,13 @@ def get_temp():
     temp, result = acqtemp()
     return temp
 
+
 def take_action(thermostat, plug, action):
     if action == "on":
         thermostat.power_on(plug)
     else:
         thermostat.power_off(plug)
+
 
 def main():
     temp = get_temp()
@@ -24,6 +26,7 @@ def main():
     plugs = []
     for material in materials.files:
         plug = Plug(material)
+        print(material)
         plugs.append(plug)
         if plug.has_config():
             plug.get_data()
