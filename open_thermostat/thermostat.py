@@ -48,11 +48,11 @@ class Thermostat():
                 return moment
 
     def power_on(self, plug):
-        electric = Energenie(plug.get_channel())
+        electric = Energenie(plug.get_number())
         electric.on()
         plug.set_on()
 
     def power_off(self, plug):
-        electric = Energenie(plug.get_channel())
+        electric = Energenie(plug.get_number())
         electric.off()
         plug.set_off()
