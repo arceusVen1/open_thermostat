@@ -9,24 +9,6 @@ class PlugConfigFile(ProbeConfigFile):
     def __init__(self, path):
         super(PlugConfigFile, self).__init__(path)
 
-    def edit(self):
-        super(PlugConfigFile, self).edit()
-
-    def exists(self):
-        super(PlugConfigFile, self).exists()
-
-    def create(self):
-        super(PlugConfigFile, self).create()
-
-    def register(self):
-        super(PlugConfigFile, self).register()
-
-    def _save(self, element):
-        super(PlugConfigFile, self)._save(element)
-
-    def readData(self):
-        super(PlugConfigFile, self).readData()
-
     def rename(self, name):
         self.closeFile()
         parent_path = path.dirname(self.path)
