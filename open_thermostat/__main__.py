@@ -28,4 +28,5 @@ def main():
                 take_action(plug, actions[plug.get_probe()])
     return
 
-
+if __name__ == '__main__':
+    main()
