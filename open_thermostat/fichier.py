@@ -28,7 +28,7 @@ class PlugConfigFile(ProbeConfigFile):
         super(PlugConfigFile, self).readData()
 
     def rename(self, name):
-        self.closefile()
+        self.closeFile()
         parent_path = path.dirname(self.path)
         rename(parent_path + name, self.path)
         self.path = parent_path + name

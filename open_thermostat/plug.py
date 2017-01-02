@@ -1,4 +1,4 @@
-from fichier import PlugConfigFile
+from open_thermostat.fichier import PlugConfigFile
 from os import listdir
 
 SETTINGS = {"slug": "", "probe": "", "type": "", "number": 0, "state": "off"}
@@ -129,7 +129,7 @@ class Plug():
         """
         if not _is_string(type_):
             raise TypeError("the type must be a string")
-        if type_ != "energenie" or type_ != "relay":
+        if type_ != "energenie" and type_ != "relay":
             raise ValueError(
                 "the type should only be \"energenie\" or \"relay\"")
         self.settings["type"] = type_
