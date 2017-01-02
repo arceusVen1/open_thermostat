@@ -1,9 +1,10 @@
 from open_thermostat.plug import Plug, Materials
 from open_thermostat.thermostat import Thermostat
-
+from open_ds18b20.__main__ import main as acqtemp
 
 def get_temp():
-    pass
+    temp, result = acqtemp()
+    return temp
 
 def take_action(thermostat, plug, action):
     if action == "on":
