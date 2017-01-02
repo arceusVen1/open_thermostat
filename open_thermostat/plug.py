@@ -1,4 +1,4 @@
-from open_thermostat.fichier import PlugConfigFile
+from fichier import PlugConfigFile
 from os import listdir
 
 SETTINGS = {"slug": "", "probe": "", "type": "", "number": 0, "state": "off"}

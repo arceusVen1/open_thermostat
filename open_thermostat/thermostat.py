@@ -1,5 +1,5 @@
 from open_ds18b20.probe import Probe
-from open_thermostat.plug import Plug
+from plug import Plug
 from gpiozero import Energenie
 from datetime import datetime
 

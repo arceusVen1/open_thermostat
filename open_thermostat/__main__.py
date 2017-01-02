@@ -1,5 +1,5 @@
-from open_thermostat.plug import Plug, Materials
-from open_thermostat.thermostat import Thermostat
+from plug import Plug, Materials
+from thermostat import Thermostat
 from open_ds18b20.__main__ import main as acqtemp
 
 def get_temp():
