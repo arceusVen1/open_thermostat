@@ -5,7 +5,7 @@ SETTINGS = {"slug": "", "probe": "", "type": "", "number": 0, "state": "off"}
 PATH = "/home/pi/ds18b20_conf/plugs/"
 
 
-def _is_int(self, number):
+def _is_int(number):
     """check if the type is a int or not
 
     Args:
@@ -17,7 +17,7 @@ def _is_int(self, number):
     return isinstance(number, int)
 
 
-def _is_string(self, string):
+def _is_string(string):
     """check if the type is a string or not
 
     Args:
