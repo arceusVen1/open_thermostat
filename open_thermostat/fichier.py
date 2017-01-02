@@ -30,6 +30,6 @@ class PlugConfigFile(ProbeConfigFile):
     def rename(self, name):
         self.closeFile()
         parent_path = path.dirname(self.path)
-        rename(parent_path + name, self.path)
+        rename(parent_path + "/" + name, self.path)
         self.path = parent_path + name
         self.file = open(self.path, 'r')
