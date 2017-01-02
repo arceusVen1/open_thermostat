@@ -17,7 +17,8 @@ def main():
     thermostat = Thermostat(temp)
     actions = thermostat.need_action()
     probes = list(actions.keys())
-    materials = Materials().detect_plugs()
+    materials = Materials()
+    materials.detect_plugs()
     plugs = []
     for material in materials.files:
         plug = Plug(material)
