@@ -17,6 +17,7 @@ def main():
     temp = get_temp()
     thermostat = Thermostat(temp)
     actions = thermostat.need_action()
+    print(actions)
     probes = list(actions.keys())
     materials = Materials()
     materials.detect_plugs()
@@ -26,8 +27,10 @@ def main():
         plugs.append(plug)
         if plug.has_config():
             plug.get_data()
+            print(plug.get_probe())
             if plug.get_probe() in probes:
-                take_action(plug, actions[plug.get_probe()])
+                print("ok")
+                take_action(thermostat, plug, actions[plug.get_probe()])
     return
 
 if __name__ == '__main__':
