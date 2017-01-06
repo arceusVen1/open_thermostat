@@ -1,8 +1,11 @@
-from fichier import PlugConfigFile
-from os import listdir
+"""
+TODO: plug_config.json -> {light:[{id:, slug:, start:, end:, state:}], thermostat:[{}], hygro:[{}]}
+"""
 
-SETTINGS = {"slug": "", "probe": "", "type": "", "number": 0, "state": "off"}
-PATH = "/home/pi/ds18b20_conf/plugs/"
+
+from fichier import PlugConfigFile
+from gpiozero import Energenie
+PATH = "/home/pi/ds18b20_conf/plugs/plug_config.json"
 
 
 def _is_int(number):
@@ -29,28 +32,30 @@ def _is_string(string):
     return isinstance(string, str)
 
 
-class Materials():
+class Materials:
     """represents the plugs or relay board
     """
 
     def __init__(self):
-        self.files = []
-
-    def detect_plugs(self):
-        for file in listdir(PATH):
-            self.files.append(file)
-
-
-class Plug():
-    """deals with the electric plug Energenie and relay
-    """
-
-    def __init__(self, file_name, settings=SETTINGS):
-        self.settings = settings
-        self.idt = file_name[:-5]
-        self.settings["slug"] = self.idt
-        path = PATH + file_name
+        path = PATH
         self.config = PlugConfigFile(path)
+        self.settings = {"lighting": [], "thermostat": [], "hygrostat": []}
+
+    def get_data(self):
+        """load the data and change the settings to match the data
+
+        Returns:
+            dict: the new settings
+        """
+        self.config.readData()
+        self.settings = self.config.settings
+        return self.settings
+
+    def set_data(self):
+        """registers the settings in the config and rename the file properly
+        """
+        self.config.settings = self.settings
+        self.config.register()
 
     def has_config(self):
         """test if the config file exist and has been filled
@@ -71,22 +76,13 @@ class Plug():
         self.config.create()
         self.config.edit()
 
-    def get_data(self):
-        """load the data and change the settings to match the data
 
-        Returns:
-            dict: the new settings
-        """
-        self.config.readData()
-        self.settings = self.config.settings
-        return self.settings
+class Plug:
+    """deals with the electric plug Energenie and relay
+    """
 
-    def set_data(self):
-        """registers the settings in the config and rename the file properly
-        """
-        self.config.settings = self.settings
-        self.config.rename(self.settings["slug"] + ".json")
-        self.config.register()
+    def __init__(self, settings):
+        self.settings = settings
 
     def get_slug(self):
         return self.settings["slug"]
@@ -95,19 +91,6 @@ class Plug():
         if not _is_string(slug):
             raise TypeError("the pseudo of plug must be a string")
         self.settings["slug"] = slug
-
-    def get_probe(self):
-        """get the id of the probe used for comparing temps/hygro
-
-        Returns:
-            string: the id of the probe
-        """
-        return self.settings["probe"]
-
-    def set_probe(self, id):
-        """give a new id for the probe used as the indicator
-        """
-        pass
 
     def get_type(self):
         """get the type of the plug (relay or Energenie)
@@ -164,9 +147,8 @@ class Plug():
         """get the state of the Plug
 
         Returns:
-            itring: "on" if porwered or "off" if not
+            string: "on" if powered or "off" if not
         """
-        self.set_state
         return self.settings["state"]
 
     def set_state(self, state):
@@ -186,7 +168,65 @@ class Plug():
         self.settings["state"] = state
 
     def set_on(self):
-        self.settings["state"] = "on"
+        self.set_state("on")
 
     def set_off(self):
-        self.settings["state"] = "off"
+        self.set_state("off")
+
+    def power_on(self):
+        electric = Energenie(self.get_number())
+        electric.on()
+        self.set_on()
+
+    def power_off(self):
+        electric = Energenie(self.get_number())
+        electric.off()
+        self.set_off()
+
+
+class ThermoPlug(Plug):
+
+    SETTINGS = {"slug": "", "probe": "", "type": "", "number": 0, "state": "off"}
+
+    def __init__(self, settings=SETTINGS):
+        super(ThermoPlug, self).__init__(settings)
+
+    def get_probe(self):
+        """get the id of the probe used for comparing temps/hygro
+
+        Returns:
+            string: the id of the probe
+        """
+        return self.settings["probe"]
+
+    def set_probe(self, id_):
+        """give a new id for the probe used as the indicator
+        """
+        self.settings["probe"] = id_
+
+    def add_thermo(self, plug_settings):
+        plug_settings["thermostat"].append(self.settings)
+
+
+class LightPlug(Plug):
+
+    SETTINGS = {"slug": "", "type": "", "number": 0, "state": "off", "start": "", "end": ""}
+
+    def __init__(self, settings=SETTINGS):
+        super(LightPlug, self).__init__(settings)
+
+    def get_start(self):
+        return self.settings["start"]
+
+    def set_start(self, start):
+        self.settings["start"] = start
+
+    def get_end(self):
+        return self.settings["end"]
+
+    def set_end(self, end):
+        self.settings["end"] = end
+
+
+class HygroPlug(Plug):
+    pass
