@@ -1,5 +1,5 @@
-from plug import Plug, Materials
-from thermostat import Thermostat
+from plug import ThermoPlug, LightPlug, Materials
+from thermostat import Thermostat, Lightstat
 from open_ds18b20.__main__ import main as acqtemp
 
 
@@ -29,7 +29,7 @@ def main():
         if plug.get_probe() in probes:
                 take_action(plug, actions[plug.get_probe()])
     light_plugs = []
-    for light_plug in materials.settings["light"]):
+    for light_plug in materials.settings["light"]:
         light_plugs.append(LightPlug(light_plug))
     Lightstat(light_plugs).actions()
     return
