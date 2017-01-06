@@ -8,32 +8,30 @@ def get_temp():
     return temp
 
 
-def take_action(thermostat, plug, action):
+def take_action(plug, action):
     if action == "on":
-        thermostat.power_on(plug)
+        plug.power_on()
     else:
-        thermostat.power_off(plug)
+        plug.power_off()
 
 
 def main():
     temp = get_temp()
     thermostat = Thermostat(temp)
     actions = thermostat.need_action()
-    print(actions)
     probes = list(actions.keys())
     materials = Materials()
-    materials.detect_plugs()
+    materials.get_data()
     plugs = []
-    for material in materials.files:
-        plug = Plug(material)
-        print(material)
+    for thermo_plug in materials.settings["thermostat"]:
+        plug = ThermoPlug(thermo_plug)
         plugs.append(plug)
-        if plug.has_config():
-            plug.get_data()
-            print(plug.get_probe())
-            if plug.get_probe() in probes:
-                print("ok")
-                take_action(thermostat, plug, actions[plug.get_probe()])
+        if plug.get_probe() in probes:
+                take_action(plug, actions[plug.get_probe()])
+    light_plugs = []
+    for light_plug in materials.settings["light"]):
+        light_plugs.append(LightPlug(light_plug))
+    Lightstat(light_plugs).actions()
     return
 
 if __name__ == '__main__':
