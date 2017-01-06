@@ -31,7 +31,7 @@ def main():
     light_plugs = []
     for light_plug in materials.settings["light"]:
         light_plugs.append(LightPlug(light_plug))
-    Lightstat(light_plugs).actions()
+    Lightstat(light_plugs).action()
     return
 
 if __name__ == '__main__':
