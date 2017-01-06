@@ -1,10 +1,17 @@
 from open_ds18b20.probe import Probe
-from plug import Plug
-from gpiozero import Energenie
+from plug import LightPlug
 from datetime import datetime
 
 
-class Thermostat():
+def _compare_time(thermorange):
+    time = datetime.now()
+    for moment in thermorange:
+        moment = datetime.strptime(moment, "%H:%M")
+        if moment.hour <= time.hour and moment.minute <= time.minute:
+            return moment
+
+
+class Thermostat:
 
     def __init__(self, temperatures, step=1):
         """get the probe ids and their temps in 2 different lists
@@ -30,8 +37,7 @@ class Thermostat():
                 probe.get_data()
                 if probe.is_thermostated():
                     thermorange = probe.link_moment_temp()
-                    # do somethig to get time and temp
-                    moment = self._compare_time(thermorange)
+                    moment = _compare_time(thermorange)
                     ref = thermorange[datetime.strftime(moment, "%H:%M")]
                     temp = float(self.temperatures[i])
                     if temp > (ref + self.step):
@@ -40,19 +46,29 @@ class Thermostat():
                         actions[self.ids[i]] = "on"
         return actions
 
-    def _compare_time(self, thermorange):
-        time = datetime.now()
-        for moment in thermorange:
-            moment = datetime.strptime(moment, "%H:%M")
-            if moment.hour <= time.hour and moment.minute <= time.minute:
-                return moment
 
-    def power_on(self, plug):
-        electric = Energenie(plug.get_number())
-        electric.on()
-        plug.set_on()
+class Lightstat:
 
-    def power_off(self, plug):
-        electric = Energenie(plug.get_number())
-        electric.off()
-        plug.set_off()
+    def __init__(self, plugs):
+        self.plugs = plugs
+
+    @property
+    def plugs(self):
+        return self.plugs
+
+    @plugs.setter
+    def plugs(self, plugs):
+        if not isinstance(plugs, list):
+            raise TypeError("you need a list of plugs")
+        for plug in plugs:
+            if not isinstance(plug, LightPlug):
+                raise TypeError("the plugs must be from LightPlug")
+        self.plugs = plugs
+
+    def action(self):
+        pass
+
+
+
+
+
