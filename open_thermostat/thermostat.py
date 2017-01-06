@@ -3,20 +3,19 @@ from plug import LightPlug
 from datetime import datetime
 
 
-def _compare_time(range):
+def _compare_time(range_):
     time = datetime.now()
     moments = []
-    for moment in range:
+    for moment in range_:
         moment = datetime.strptime(moment, "%H:%M")
         moments.append(moment)
         if moment.hour <= time.hour and moment.minute <= time.minute:
             return moment
     moments.sort()
-    return moment[–1]
+    return moments[-1]
 
 
 class Thermostat:
-
     def __init__(self, temperatures, step=1):
         """get the probe ids and their temps in 2 different lists
 
@@ -28,6 +27,7 @@ class Thermostat:
         self.temperatures = list(temperatures.values())
         self.step = step
 
+    @property
     def need_action(self):
         """Take a look at the configuration of the plugs and compares with the temps to decide if an action is needed (on/off)
 
@@ -52,7 +52,6 @@ class Thermostat:
 
 
 class Lightstat:
-
     def __init__(self, plugs):
         self.plugs = plugs
 
@@ -70,9 +69,14 @@ class Lightstat:
         self.plugs = plugs
 
     def action(self):
-        pass
-
-
-
-
+        for plug in self.plugs:
+            range_ = []
+            range_.append(plug.get_start())
+            range_.append(plug.get_end())
+            time = _compare_time(range_)
+            time = datetime.strftime(time, "%H:%M")
+            if time == plug.get_start():
+                plug.power_on()
+            else:
+                plug.power_off()
 
