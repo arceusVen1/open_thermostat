@@ -3,12 +3,16 @@ from plug import LightPlug
 from datetime import datetime
 
 
-def _compare_time(thermorange):
+def _compare_time(range):
     time = datetime.now()
-    for moment in thermorange:
+    moments = []
+    for moment in range:
         moment = datetime.strptime(moment, "%H:%M")
+        moments.append(moment)
         if moment.hour <= time.hour and moment.minute <= time.minute:
             return moment
+    moments.sort()
+    return moment[–1]
 
 
 class Thermostat:
