@@ -27,7 +27,6 @@ class Thermostat:
         self.temperatures = list(temperatures.values())
         self.step = step
 
-    @property
     def need_action(self):
         """Take a look at the configuration of the plugs and compares with the temps to decide if an action is needed (on/off)
 
@@ -53,6 +52,10 @@ class Thermostat:
 
 class Lightstat:
     def __init__(self, plugs):
+        """
+
+        :type plugs: list
+        """
         self.plugs = plugs
 
     @property
