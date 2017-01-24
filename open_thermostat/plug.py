@@ -1,5 +1,6 @@
 """
 TODO: plug_config.json -> {light:[{id:, slug:, start:, end:, state:}], thermostat:[{}], hygro:[{}]}
+    - find a solutin to add the new parameters
 """
 
 
@@ -76,6 +77,11 @@ class Materials:
         self.config.create()
         self.config.edit()
 
+    def get_thermoplugs(self):
+        return self.settings["thermostat"]
+
+    def get_lightplugs(self):
+        return self.settings["lighting"]
 
 class Plug:
     """deals with the electric plug Energenie and relay
