@@ -60,7 +60,7 @@ class Lightstat:
 
     @property
     def plugs(self):
-        return self.plugs
+        return self._plugs
 
     @plugs.setter
     def plugs(self, plugs):
@@ -69,7 +69,7 @@ class Lightstat:
         for plug in plugs:
             if not isinstance(plug, LightPlug):
                 raise TypeError("the plugs must be from LightPlug")
-        self.plugs = plugs
+        self._plugs = plugs
 
     def action(self):
         for plug in self.plugs:
