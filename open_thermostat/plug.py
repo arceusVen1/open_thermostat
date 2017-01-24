@@ -163,7 +163,7 @@ class Plug:
         """
         if not _is_string(state):
             raise TypeError("the state must be a string of \"on\" or \"off\"")
-        if state != "on" or state != "off":
+        if state != "on" and state != "off":
             raise ValueError("the state should only be \"on\" or \"off\"")
         self.settings["state"] = state
 
@@ -226,6 +226,9 @@ class LightPlug(Plug):
 
     def set_end(self, end):
         self.settings["end"] = end
+
+    def add_light(self, plug_settings):
+        plug_settings["lighting"].append(self.settings)
 
 
 class HygroPlug(Plug):
