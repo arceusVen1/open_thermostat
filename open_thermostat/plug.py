@@ -48,7 +48,7 @@ class Materials:
         Returns:
             dict: the new settings
         """
-        self.config.readData()
+        self.config.get_data()
         self.settings = self.config.settings
         return self.settings
 

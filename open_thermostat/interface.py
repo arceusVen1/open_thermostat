@@ -1,7 +1,7 @@
 # Imports-------------------------------------------------
 
 import sys
-from open_thermostat.plug import *
+from plug import *
 
 # GLOBAL--------------------------------------------------
 
@@ -17,21 +17,25 @@ def display(string):
 def show_plugs():
     materials = Materials()
     if materials.has_config():
+        materials.get_data()
         display("List of plugs")
     else:
         display("no config yet")
         return
     i = 1
     display("Plugs for thermostat")
+    plugs = []
     thermoplugs = materials.get_thermoplugs()
     lightplugs = materials.get_lightplugs()
     for therm in thermoplugs:
         plug = ThermoPlug(therm)
+        plugs.append(plug)
         display(str(i) + " : " + plug.get_slug())
         i += 1
     display("Plugs for lighting")
     for light in lightplugs:
         plug = LightPlug(light)
+        plugs.append(plug)
         display(str(i) + " : " + plug.get_slug())
         i += 1
     display("Would you like to configure one or add one ? (y/new/n)")
@@ -43,10 +47,8 @@ def show_plugs():
         choice = int(input(PROMPT))
         if choice > i or choice < 1:
             return "not a correct probe"
-        elif choice >= len(thermoplugs):
-            plug = lightplugs[choice - len(thermoplugs) - 1]
         else:
-            plug = thermoplugs[choice - 1]
+            plug = plugs[choice - 1]
     else:
         return
     show_config_plug(plug)

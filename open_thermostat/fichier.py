@@ -7,5 +7,5 @@ class PlugConfigFile(ProbeConfigFile):
 
     def __init__(self, path):
         super(PlugConfigFile, self).__init__(path)
-        if self.config.exist():
+        if self.exists():
             self.edit()
