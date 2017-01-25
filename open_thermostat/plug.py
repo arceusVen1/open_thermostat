@@ -42,22 +42,6 @@ class Materials:
         self.config = PlugConfigFile(path)
         self.settings = {"lighting": [], "thermostat": [], "hygrostat": []}
 
-    def get_data(self):
-        """load the data and change the settings to match the data
-
-        Returns:
-            dict: the new settings
-        """
-        self.config.get_data()
-        self.settings = self.config.settings
-        return self.settings
-
-    def set_data(self):
-        """registers the settings in the config and rename the file properly
-        """
-        self.config.settings = self.settings
-        self.config.register()
-
     def has_config(self):
         """test if the config file exist and has been filled
 
@@ -77,6 +61,24 @@ class Materials:
         self.config.create()
         self.config.edit()
 
+    def get_data(self):
+        """load the data and change the settings to match the data
+
+        Returns:
+            dict: the new settings
+        """
+        self.config.get_data()
+        self.settings = self.config.settings
+        return self.settings
+
+    def set_data(self):
+        """registers the settings in the config and rename the file properly
+        """
+        self.config.settings = self.settings
+        self.config.register()
+
+
+
     def get_thermoplugs(self):
         return self.settings["thermostat"]
 
@@ -89,6 +91,14 @@ class Plug:
 
     def __init__(self, settings):
         self.settings = settings
+
+    def get_id(self):
+        return self.settings["id"]
+
+    def set_id(self, id_):
+        if not isinstance(id_, int):
+            raise TypeError("the id must be a correct integer")
+        self.settings["id"] = id_
 
     def get_slug(self):
         return self.settings["slug"]
