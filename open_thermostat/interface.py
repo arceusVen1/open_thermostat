@@ -61,7 +61,7 @@ def show_config_plug(plug):
         return
     display("- slug : " + plug.get_slug())
     display("- type : " + plug.get_type())
-    display("- number : " + plug.get_number())
+    display("- number : " + str(plug.get_number()))
     display("- state : " + plug.get_state())
     if isinstance(plug, ThermoPlug):
         display("- probe : " + plug.get_probe())
