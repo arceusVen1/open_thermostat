@@ -129,5 +129,6 @@ def config_plug(materials, plug=None):
             except Exception as e:
                 display((str(e)))
     materials.add_plug(plug)
+    materials.set_data()
 
 show_plugs()
