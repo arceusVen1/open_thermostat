@@ -3,8 +3,6 @@
 import sys
 from plug import *
 
-# GLOBAL--------------------------------------------------
-
 PROMPT = '> '
 
 
@@ -52,7 +50,7 @@ def show_plugs():
     else:
         return
     show_config_plug(plug)
-    config_plug(materials.settings, plug)
+    config_plug(materials, plug)
 
 
 def show_config_plug(plug):
@@ -66,11 +64,11 @@ def show_config_plug(plug):
     if isinstance(plug, ThermoPlug):
         display("- probe : " + plug.get_probe())
     if isinstance(plug, LightPlug):
-        display("- start : " + plug.get_start)
+        display("- start : " + plug.get_start())
         display("- end : " + plug.get_end())
 
 
-def config_plug(settings, plug=None):
+def config_plug(materials, plug=None):
     if plug is None or not isinstance(plug, Plug):
         display("For thermostat or light ? (1/2)")
         choice = int(input(PROMPT))
@@ -91,7 +89,7 @@ def config_plug(settings, plug=None):
             display(str(e))
     flag = False
     while not flag:
-        display("new type :")
+        display("new type (energenie/relay):")
         try:
             plug.set_type(input(PROMPT))
             flag = True
@@ -114,7 +112,6 @@ def config_plug(settings, plug=None):
                 flag = True
             except Exception as e:
                 display(str(e))
-        plug.add_thermo(settings)
     elif isinstance(plug, LightPlug):
         while not flag:
             display("time of power on (HH:MM)")
@@ -131,4 +128,6 @@ def config_plug(settings, plug=None):
                 flag = True
             except Exception as e:
                 display((str(e)))
-        plug.add_light(settings)
+    materials.add_plug(plug)
+
+show_plugs()

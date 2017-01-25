@@ -77,13 +77,62 @@ class Materials:
         self.config.settings = self.settings
         self.config.register()
 
+    def add_plug(self, plug):
+        """
+        To add the plug in the settings of the config or overwrite an existing one (not DRY yet)
 
+        :param plug: a plug whom to config is to add
+        :type plug: Plug
+        """
+        if not isinstance(plug, Plug):
+            raise TypeError("no correct plug given")
+        id_ = plug.get_id()
+        therms = self.get_thermoplugs()
+        lights = self.get_lightplugs()
+        hygros = self.get_hygroplugs()
+        if id_ == 0:
+            plug.set_id(len(therms) + len(lights) + len(hygros))
+            if isinstance(plug, ThermoPlug):
+                therms.append(plug.settings)
+            if isinstance(plug, LightPlug):
+                lights.append(plug.settings)
+            if isinstance(plug, HygroPlug):
+                hygros.append(plug.settings)
+        else:
+            flag = False
+            if isinstance(plug, ThermoPlug):
+                for i in range(len(therms)):
+                    if therms[i]["id"] == id_:
+                        therms[i] = plug.settings
+                        print("Plug settings registered as a thermostat plug\n")
+                        flag = True
+                        break
+            elif isinstance(plug, LightPlug):
+                for i in range(len(lights)):
+                    if lights[i]["id"] == id_:
+                        lights[i] = plug.settings
+                        print("Plug settings registered as a lighting plug\n")
+                        flag = True
+                        break
+            elif isinstance(plug, HygroPlug):
+                for i in range(len(hygros)):
+                    if hygros[i]["id"] == id_:
+                        hygros[i] = plug.settings
+                        print("Plug settings registered as a hygrostat plug\n")
+                        flag = True
+                        break
+            if not flag:
+                raise ValueError("the id of the probe does not match any existing")
 
     def get_thermoplugs(self):
         return self.settings["thermostat"]
 
     def get_lightplugs(self):
         return self.settings["lighting"]
+
+    def get_hygroplugs(self):
+        return self.settings["hygrostat"]
+
 
 class Plug:
     """deals with the electric plug Energenie and relay
@@ -96,8 +145,15 @@ class Plug:
         return self.settings["id"]
 
     def set_id(self, id_):
+        """
+        Sets the unique id of a probe
+        :param id_: the new id
+        :type id_: int
+        """
         if not isinstance(id_, int):
             raise TypeError("the id must be a correct integer")
+        if id_ <= 0:
+            raise ValueError("the id must be a positive integer")
         self.settings["id"] = id_
 
     def get_slug(self):
@@ -202,7 +258,7 @@ class Plug:
 
 class ThermoPlug(Plug):
 
-    SETTINGS = {"slug": "", "probe": "", "type": "", "number": 0, "state": "off"}
+    SETTINGS = {"id": 0, "slug": "", "probe": "", "type": "", "number": 0, "state": "off"}
 
     def __init__(self, settings=SETTINGS):
         super(ThermoPlug, self).__init__(settings)
@@ -226,7 +282,7 @@ class ThermoPlug(Plug):
 
 class LightPlug(Plug):
 
-    SETTINGS = {"slug": "", "type": "", "number": 0, "state": "off", "start": "", "end": ""}
+    SETTINGS = {"id": 0, "slug": "", "type": "", "number": 0, "state": "off", "start": "", "end": ""}
 
     def __init__(self, settings=SETTINGS):
         super(LightPlug, self).__init__(settings)
