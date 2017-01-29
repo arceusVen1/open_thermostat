@@ -29,7 +29,7 @@ def main():
         if plug.get_probe() in probes:
                 take_action(plug, actions[plug.get_probe()])
     light_plugs = []
-    for light_plug in materials.settings["light"]:
+    for light_plug in materials.settings["lighting"]:
         light_plugs.append(LightPlug(light_plug))
     Lightstat(light_plugs).action()
     return
