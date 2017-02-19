@@ -4,7 +4,7 @@ TODO: plug_config.json -> {light:[{id:, slug:, start:, end:, state:}], thermosta
 """
 
 
-from fichier import PlugConfigFile
+from open_thermostat.fichier import PlugConfigFile
 from gpiozero import Energenie
 PATH = "/home/pi/ds18b20_conf/plugs/plug_config.json"
 
@@ -12,11 +12,12 @@ PATH = "/home/pi/ds18b20_conf/plugs/plug_config.json"
 def _is_int(number):
     """check if the type is a int or not
 
-    Args:
-        number (obj): the number you want to test
 
-    Returns:
-        bool: True if number is a int
+    :param number: the number you want to test
+    :type number: object
+
+    :return: True if number is a int
+    :rtype: bool
     """
     return isinstance(number, int)
 
@@ -24,11 +25,11 @@ def _is_int(number):
 def _is_string(string):
     """check if the type is a string or not
 
-    Args:
-        string (obj): the string you want to check
+    :param string: the string you want to check
+    :type string: object
 
-    Returns:
-        bool: True if string is really a string
+    :return: True if string is really a string
+    :rtype: bool
     """
     return isinstance(string, str)
 
@@ -45,8 +46,8 @@ class Materials:
     def has_config(self):
         """test if the config file exist and has been filled
 
-        Returns:
-            bool: true if the config exists, false otherwise
+        :return: True if the config exists, false otherwise
+        :rtype: bool
         """
         if not self.config.exists() or (hasattr(self.config, "nbline") and
                                         self.config.nbline == 0):
@@ -64,8 +65,8 @@ class Materials:
     def get_data(self):
         """load the data and change the settings to match the data
 
-        Returns:
-            dict: the new settings
+        :return: the new settings
+        :rtype: dict
         """
         self.config.get_data()
         self.settings = self.config.settings
@@ -79,9 +80,10 @@ class Materials:
 
     def add_plug(self, plug):
         """
-        To add the plug in the settings of the config or overwrite an existing one (not DRY yet)
+        To add the plug in the settings of the config or overwrite an existing one.
+        An id of 0 is recognized as a new Plug to add, the id is set to be of the total number of plugs then
 
-        :param plug: a plug whom to config is to add
+        :param plug: a plug whom config is to add
         :type plug: Plug
         """
         if not isinstance(plug, Plug):
@@ -91,12 +93,12 @@ class Materials:
         lights = self.get_lightplugs()
         hygros = self.get_hygroplugs()
         if id_ == 0:
-            plug.set_id(len(therms) + len(lights) + len(hygros))
+            plug.set_id(len(therms) + len(lights) + len(hygros) + 1)
             if isinstance(plug, ThermoPlug):
                 therms.append(plug.settings)
-            if isinstance(plug, LightPlug):
+            elif isinstance(plug, LightPlug):
                 lights.append(plug.settings)
-            if isinstance(plug, HygroPlug):
+            elif isinstance(plug, HygroPlug):
                 hygros.append(plug.settings)
         else:
             flag = False
@@ -125,12 +127,30 @@ class Materials:
                 raise ValueError("the id of the probe does not match any existing")
 
     def get_thermoplugs(self):
+        """
+        Gets the list of all the plugs used as thermostat
+
+        :return: the list of plugs used as thermostat
+        :rtype: list
+        """
         return self.settings["thermostat"]
 
     def get_lightplugs(self):
+        """
+        Gets the list of all the plugs controlling lights
+
+        :return: the list of plugs controlling lights
+        :rtype: list
+        """
         return self.settings["lighting"]
 
     def get_hygroplugs(self):
+        """
+        Gets the list of all the plugs used as hygrostat
+
+        :return: the list of plugs used as hygrostat
+        :rtype: list
+        """
         return self.settings["hygrostat"]
 
 
@@ -142,13 +162,23 @@ class Plug:
         self.settings = settings
 
     def get_id(self):
+        """
+        Gets the id of the plug (above 1)
+
+        :return: the id of the plug
+        :rtype: int
+        """
         return self.settings["id"]
 
     def set_id(self, id_):
         """
-        Sets the unique id of a probe
+        Sets the unique id of a probe (above 1)
+
         :param id_: the new id
         :type id_: int
+
+        :raises TypeError: if the given id is not an integer
+        :raises ValueError: if the given id <= 0
         """
         if not isinstance(id_, int):
             raise TypeError("the id must be a correct integer")
@@ -157,9 +187,23 @@ class Plug:
         self.settings["id"] = id_
 
     def get_slug(self):
+        """
+        Gets the slug used as a pseudo for the plug
+
+        :return: the slug
+        :rtype: str
+        """
         return self.settings["slug"]
 
     def set_slug(self, slug):
+        """
+        Sets the pseudo of the probe
+
+        :param slug: the new pseudo of the probe
+        :type slug: str
+
+        :raises TypeError: If the given slug is not a string
+        """
         if not _is_string(slug):
             raise TypeError("the pseudo of plug must be a string")
         self.settings["slug"] = slug
@@ -167,20 +211,19 @@ class Plug:
     def get_type(self):
         """get the type of the plug (relay or Energenie)
 
-        Returns:
-            string: the type of plug
+        :return: the type of plug
+        :rtype: str
         """
         return self.settings["type"]
 
     def set_type(self, type_):
         """set the type of the plug
 
-        Args:
-            type_ (string): "energeniee or "relay"
+        :param type_: "energenie" or "relay"
+        :type type_: str
 
-        Raises:
-            TypeError: if the type is not a string
-            ValueError: if the type differs from "energenie" or "relay"
+        :raises TypeError: if the type is not a string
+        :raises ValueError: if the type differs from "energenie" or "relay"
         """
         if not _is_string(type_):
             raise TypeError("the type must be a string")
@@ -192,46 +235,44 @@ class Plug:
     def get_number(self):
         """get the number of the pin for the relay or the channel for the Energenie
 
-        Returns:
-            int: number of the pin or channel
+        :return: number of the pin or channel
+        :rtype: int
         """
         return self.settings["number"]
 
     def set_number(self, number):
         """set the number of the pin or channel of the plug
 
-        Args:
-            number (int): the pin or channel number
+        :param number: the new pin or channel number
+        :type number: int
 
-        Raises:
-            TypeError: the number must be an integer
-            ValueError: the channel is between 1 and 4 and pin between 0 and 25
+        :raises TypeError: the number must be an integer
+        :raises ValueError: the channel is between 1 and 4 and pin in [5, 6, 13, 16, 23, 26, 22, 24, 27, 12]
         """
         if not _is_int(number):
             raise TypeError("the channel or pin number should be an integer")
         if self.settings["state"] == "energenie" and number > 4 or number < 1:
             raise ValueError("the channel number should be between 1 and 4")
-        elif number > 25:
-            raise ValueError("the pin number should be between 0 and 25")
+        elif number not in [5, 6, 13, 16, 23, 26, 22, 24, 27, 12]:
+            raise ValueError("the pin number should be either 5, 6, 13, 16, 22, 23, 24, 26, 27 or 12")
         self.settings["number"] = number
 
     def get_state(self):
         """get the state of the Plug
 
-        Returns:
-            string: "on" if powered or "off" if not
+        :return: "on" if powered or "off" if not
+        :rtype: str
         """
         return self.settings["state"]
 
     def set_state(self, state):
         """change the value of the state of the plug
 
-        Args:
-            state (string): "on" or "off"
+        :param state: "on" or "off"
+        :type state: str
 
-        Raises:
-            TypeError: the state is a string
-            ValueError: if the state differs from "on" or "off"
+        :raises TypeError: the state is a string
+        :raises ValueError: if the state differs from "on" or "off"
         """
         if not _is_string(state):
             raise TypeError("the state must be a string of \"on\" or \"off\"")
@@ -240,19 +281,39 @@ class Plug:
         self.settings["state"] = state
 
     def set_on(self):
+        """
+        Sets the state to on
+        """
         self.set_state("on")
 
     def set_off(self):
+        """
+        Sets the state to off
+        """
         self.set_state("off")
 
     def power_on(self):
-        electric = Energenie(self.get_number())
-        electric.on()
+        if self.get_type() == "energenie":
+            electric = Energenie(self.get_number())
+            electric.on()
+        else:
+            import RPi.GPIO as GPIO
+            GPIO.setmode(GPIO.BCM)
+            number = self.get_number()
+            GPIO.setup(number, GPIO.OUT)
+            GPIO.output(number, GPIO.HIGH)
         self.set_on()
 
     def power_off(self):
-        electric = Energenie(self.get_number())
-        electric.off()
+        if self.get_type() == "energenie":
+            electric = Energenie(self.get_number())
+            electric.off()
+        else:
+            import RPi.GPIO as GPIO
+            GPIO.setmode(GPIO.BCM)
+            number = self.get_number()
+            GPIO.setup(number, GPIO.OUT)
+            GPIO.output(number, GPIO.LOW)
         self.set_off()
 
 
@@ -266,18 +327,19 @@ class ThermoPlug(Plug):
     def get_probe(self):
         """get the id of the probe used for comparing temps/hygro
 
-        Returns:
-            string: the id of the probe
+        :returns: the id of the probe
+        :rtype: str
         """
         return self.settings["probe"]
 
     def set_probe(self, id_):
-        """give a new id for the probe used as the indicator
+        """
+        give a new id for the probe used as the indicator
+
+        :param id_: the id correspond to the slug of the probe
+        :type id_: str
         """
         self.settings["probe"] = id_
-
-    def add_thermo(self, plug_settings):
-        plug_settings["thermostat"].append(self.settings)
 
 
 class LightPlug(Plug):
@@ -288,19 +350,40 @@ class LightPlug(Plug):
         super(LightPlug, self).__init__(settings)
 
     def get_start(self):
+        """
+        Gets the starting time for the light (HH:MM)
+
+        :return: the starting time (HH:MM)
+        :rtype: str
+        """
         return self.settings["start"]
 
     def set_start(self, start):
+        """
+        Sets the starting time for the light (HH:MM)
+
+        :param start: HH:MM
+        :type start: str
+        """
         self.settings["start"] = start
 
     def get_end(self):
+        """
+        Gets the ending time for the light (HH:MM)
+
+        :return: the ending time (HH:MM)
+        :rtype: str
+        """
         return self.settings["end"]
 
     def set_end(self, end):
-        self.settings["end"] = end
+        """
+        Sets the starting time for the light (HH:MM)
 
-    def add_light(self, plug_settings):
-        plug_settings["lighting"].append(self.settings)
+        :param end: HH:MM
+        :type end: str
+        """
+        self.settings["end"] = end
 
 
 class HygroPlug(Plug):
