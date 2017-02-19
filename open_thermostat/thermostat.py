@@ -52,9 +52,9 @@ class Thermostat:
         materials = Materials()
         materials.get_data()
         for i in range(len(self.slugs)):
-            fprobe = materials.get_probe_by_slug(self.slugs[i])
+            fprobe = materials.get_ds18b20_by_slug(self.slugs[i])
             if fprobe:
-                probe = Ds18b20(settings=fprobe[0]) # ne protège pas d'une DHT22 car les settings sont quand meme importé
+                probe = Ds18b20(settings=fprobe[0])
                 if probe.has_config() and probe.is_thermostated():
                     thermorange = probe.link_moment_value()
                     moment = _compare_time(list(thermorange.keys()))
