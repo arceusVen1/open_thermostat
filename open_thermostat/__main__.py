@@ -1,5 +1,5 @@
-from open_thermostat.plug import ThermoPlug, LightPlug, Materials
-from open_thermostat.thermostat import Thermostat, Lightstat
+from plug import ThermoPlug, LightPlug, Materials
+from thermostat import Thermostat, Lightstat
 from open_ds18b20.__main__ import main as acqtemp
 
 

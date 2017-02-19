@@ -1,5 +1,5 @@
 from open_ds18b20.probe import Ds18b20, Dht22, Materials
-from open_thermostat.plug import LightPlug
+from plug import LightPlug
 from datetime import datetime
 
 

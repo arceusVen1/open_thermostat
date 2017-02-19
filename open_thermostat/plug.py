@@ -4,7 +4,7 @@ TODO: plug_config.json -> {light:[{id:, slug:, start:, end:, state:}], thermosta
 """
 
 
-from open_thermostat.fichier import PlugConfigFile
+from fichier import PlugConfigFile
 from gpiozero import Energenie
 PATH = "/home/pi/ds18b20_conf/plugs/plug_config.json"
 
