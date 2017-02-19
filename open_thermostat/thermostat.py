@@ -50,6 +50,7 @@ class Thermostat:
         """
         actions = {}
         materials = Materials()
+        materials.allow_config()
         materials.get_data()
         for i in range(len(self.slugs)):
             fprobe = materials.get_ds18b20_by_slug(self.slugs[i])
