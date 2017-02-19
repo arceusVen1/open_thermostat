@@ -1,59 +1,76 @@
-from open_ds18b20.probe import Probe
-from plug import LightPlug
+from open_ds18b20.probe import Ds18b20, Dht22, Materials
+from open_thermostat.plug import LightPlug
 from datetime import datetime
 
 
 def _compare_time(range_):
+    """
+    Compares a list of moments (format HH:MM) with the current time by returning the first moment that is
+    before the current time. If no moment found, returns the last moment in time from a sorted list
+    of datetime to avoid conflict with morning.
+
+    :param range_: the list of moment to compare
+    :type range_: list
+
+    :return: the first moment before current time
+    :rtype: Datetime
+    """
     time = datetime.now()
     moments = []
     for moment in range_:
         moment = datetime.strptime(moment, "%H:%M")
-        moments.append(moment)
         if moment.hour <= time.hour and moment.minute <= time.minute:
             return moment
+        moments.append(moment)
     moments.sort()
     return moments[-1]
 
 
 class Thermostat:
     def __init__(self, temperatures, step=1):
-        """get the probe ids and their temps in 2 different lists
-
-        Args:
-            temperatures (dict): {id_of_the_probe: temp}
-            step (int, optional): the range above and below the ref temp accepted, 1 by default
         """
-        self.ids = list(temperatures.keys())
+        Gets the probe slugs and their temps in 2 different lists
+
+        :param temperatures:  hash of temps from open_ds18b20 return {slug_of_the_probe: temp}
+        :type temperatures: dict
+        :param: (optional) the range above and below the ref temp accepted, 1 by default
+        :type step: int
+        """
+        self.slugs = list(temperatures.keys())
         self.temperatures = list(temperatures.values())
         self.step = step
 
     def need_action(self):
-        """Take a look at the configuration of the plugs and compares with the temps to decide if an action is needed (on/off)
+        """
+        Takes a look at the configuration of the probes and
+        compares with the temperatures to decide if an action is needed (on/off)
 
-        Returns:
-            dict: {id_of_the_probe : action}
+        :returns: {slug_of_the_probe : action}
+        :rtype: dict
         """
         actions = {}
-        for i in range(len(self.ids)):
-            probe = Probe(self.ids[i])
-            if probe.has_config():
-                probe.get_data()
-                if probe.is_thermostated():
-                    thermorange = probe.link_moment_temp()
-                    moment = _compare_time(thermorange)
+        materials = Materials()
+        materials.get_data()
+        for i in range(len(self.slugs)):
+            fprobe = materials.get_probe_by_slug(self.slugs[i])
+            if fprobe:
+                probe = Ds18b20(settings=fprobe[0]) # ne protège pas d'une DHT22 car les settings sont quand meme importé
+                if probe.has_config() and probe.is_thermostated():
+                    thermorange = probe.link_moment_value()
+                    moment = _compare_time(list(thermorange.keys()))
                     ref = thermorange[datetime.strftime(moment, "%H:%M")]
                     temp = float(self.temperatures[i])
                     if temp > (ref + self.step):
-                        actions[self.ids[i]] = "off"
+                        actions[self.slugs[i]] = "off"
                     elif temp < (ref - self.step):
-                        actions[self.ids[i]] = "on"
+                        actions[self.slugs[i]] = "on"
         return actions
 
 
 class Lightstat:
     def __init__(self, plugs):
         """
-
+        :param plugs: the list of plugs connected to light
         :type plugs: list
         """
         self.plugs = plugs
@@ -72,6 +89,9 @@ class Lightstat:
         self._plugs = plugs
 
     def action(self):
+        """
+        Powers on or off the plugs based on their configuration and current time
+        """
         for plug in self.plugs:
             range_ = []
             range_.append(plug.get_start())
