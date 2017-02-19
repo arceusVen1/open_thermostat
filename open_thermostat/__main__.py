@@ -1,14 +1,22 @@
-from plug import ThermoPlug, LightPlug, Materials
-from thermostat import Thermostat, Lightstat
+from open_thermostat.plug import ThermoPlug, LightPlug, Materials
+from open_thermostat.thermostat import Thermostat, Lightstat
 from open_ds18b20.__main__ import main as acqtemp
 
 
 def get_temp():
-    temp, result = acqtemp()
-    return temp
+    result = acqtemp()
+    return result[0]
 
 
 def take_action(plug, action):
+    """
+    Powers on or off a plug based on the action required
+
+    :param plug: the plug to Power on or off
+    :type plug: Plug
+    :param action: "on" or "off", it is the given result of Thermostat.need_action() function
+    :type action: str
+    """
     if action == "on":
         plug.power_on()
     else:
