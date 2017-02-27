@@ -54,7 +54,7 @@ class Thermostat:
         materials.get_data()
         for i in range(len(self.slugs)):
             fprobe = materials.get_ds18b20_by_slug(self.slugs[i])
-            print(fprobe)
+            print(fprobe[0])
             if fprobe is not (None, None):
                 probe = Ds18b20(settings=fprobe[0])
                 if probe.has_config(materials) and probe.is_thermostated():
