@@ -158,6 +158,12 @@ class Plug:
     """deals with the electric plug Energenie and relay
     """
 
+    def __str__(self, *args, **kwargs):
+        state = self.get_state()
+        number = self.get_number()
+        id = self.get_id()
+        return (id + ": " + str(number) + " - state: " + state)
+
     def __init__(self, settings):
         self.settings = settings
 

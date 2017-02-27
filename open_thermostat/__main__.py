@@ -27,6 +27,7 @@ def main():
     temp = get_temp()
     thermostat = Thermostat(temp)
     actions = thermostat.need_action()
+    print(actions)
     probes = list(actions.keys())
     materials = Materials()
     materials.get_data()
@@ -35,6 +36,7 @@ def main():
         plug = ThermoPlug(thermo_plug)
         plugs.append(plug)
         if plug.get_probe() in probes:
+                print(plug)
                 take_action(plug, actions[plug.get_probe()])
     light_plugs = []
     for light_plug in materials.settings["lighting"]:
