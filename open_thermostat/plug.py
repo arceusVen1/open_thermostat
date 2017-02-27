@@ -307,7 +307,7 @@ class Plug:
             GPIO.setmode(GPIO.BCM)
             number = self.get_number()
             GPIO.setup(number, GPIO.OUT)
-            GPIO.output(number, GPIO.HIGH)
+            GPIO.output(number, GPIO.LOW)
         self.set_on()
 
     def power_off(self):
@@ -319,7 +319,7 @@ class Plug:
             GPIO.setmode(GPIO.BCM)
             number = self.get_number()
             GPIO.setup(number, GPIO.OUT)
-            GPIO.output(number, GPIO.LOW)
+            GPIO.output(number, GPIO.HIGH)
         self.set_off()
 
 
