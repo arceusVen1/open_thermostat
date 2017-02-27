@@ -56,7 +56,7 @@ class Thermostat:
             fprobe = materials.get_ds18b20_by_slug(self.slugs[i])
             if fprobe:
                 probe = Ds18b20(settings=fprobe[0])
-                if probe.has_config() and probe.is_thermostated():
+                if probe.has_config(materials) and probe.is_thermostated():
                     thermorange = probe.link_moment_value()
                     moment = _compare_time(list(thermorange.keys()))
                     ref = thermorange[datetime.strftime(moment, "%H:%M")]
