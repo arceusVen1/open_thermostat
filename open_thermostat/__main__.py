@@ -34,14 +34,17 @@ def main():
     plugs = []
     for thermo_plug in materials.settings["thermostat"]:
         plug = ThermoPlug(thermo_plug)
-        plugs.append(plug)
         if plug.get_probe() in probes:
                 print(plug)
                 take_action(plug, actions[plug.get_probe()])
+                plugs.append(plug)
     light_plugs = []
     for light_plug in materials.settings["lighting"]:
         light_plugs.append(LightPlug(light_plug))
     Lightstat(light_plugs).action()
+    for plug in plugs:
+        materials.add_plug(plug)
+    materials.set_data()
     return
 
 if __name__ == '__main__':
