@@ -162,7 +162,7 @@ class Plug:
         state = self.get_state()
         number = self.get_number()
         id = self.get_id()
-        return (id + ": " + str(number) + " - state: " + state)
+        return str(id) + ": " + str(number) + " - state: " + state
 
     def __init__(self, settings):
         self.settings = settings
