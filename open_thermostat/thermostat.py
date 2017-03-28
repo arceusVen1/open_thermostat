@@ -83,10 +83,10 @@ class Lightstat:
     @plugs.setter
     def plugs(self, plugs):
         if not isinstance(plugs, list):
-            raise TypeError("you need a list of plugs")
+            raise TypeError("Il vous une liste de prise")
         for plug in plugs:
             if not isinstance(plug, LightPlug):
-                raise TypeError("the plugs must be from LightPlug")
+                raise TypeError("La prise doit être une LightPlug")
         self._plugs = plugs
 
     def action(self):
